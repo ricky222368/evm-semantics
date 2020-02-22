@@ -1460,7 +1460,8 @@ For each `CALL*` operation, we make a corresponding call to `#call` and a state-
 ```k
     syntax CallOp ::= "CALL"
  // ------------------------
-    rule <k> CALL GCAP ACCTTO VALUE ARGSTART ARGWIDTH RETSTART RETWIDTH
+//todo hack moved to EVM-SYMB-TESTING
+/*    rule <k> CALL GCAP ACCTTO VALUE ARGSTART ARGWIDTH RETSTART RETWIDTH
           => #checkCall ACCTFROM VALUE
           ~> #call ACCTFROM ACCTTO ACCTTO VALUE VALUE #range(LM, ARGSTART, ARGWIDTH) false
           ~> #return RETSTART RETWIDTH
@@ -1469,6 +1470,7 @@ For each `CALL*` operation, we make a corresponding call to `#call` and a state-
          <schedule> SCHED </schedule>
          <id> ACCTFROM </id>
          <localMem> LM </localMem>
+*/
 
     syntax CallOp ::= "CALLCODE"
  // ----------------------------
@@ -1851,9 +1853,10 @@ Overall Gas
 ```k
     syntax InternalOp ::= "#gas" "[" OpCode "," OpCode "]"
  // ---------------------------------------------------------------------------
-    rule <k> #gas [ OP , AOP ]
-          => #if #usesMemory(OP) #then #memory [ AOP ] #else .K #fi
-          ~> #gas [ AOP ]
+    //todo hack for EVM-SYMB-TESTING
+    rule <k> #gas [ OP , AOP ] => .
+          //=> #if #usesMemory(OP) #then #memory [ AOP ] #else .K #fi
+          //~> #gas [ AOP ]
          ...
         </k>
 
