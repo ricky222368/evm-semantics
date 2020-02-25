@@ -206,7 +206,7 @@ $(java_dir)/%.k: %.md $(TANGLER)
 
 $(symb_test_dir)/%.k: %.md $(TANGLER)
 	@mkdir -p $(symb_test_dir)
-	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(java_tangle)" $< > $@
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(haskell_tangle)" $< > $@
 
 $(haskell_dir)/%.k: %.md $(TANGLER)
 	@mkdir -p $(haskell_dir)
@@ -245,7 +245,7 @@ $(symb_test_kompiled): MAIN_MODULE=EVM-SYMB-TESTING
 $(symb_test_kompiled): SYNTAX_MODULE=EVM-SYMB-TESTING
 
 $(symb_test_kompiled): $(symb_test_files)
-	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell \
+	$(K_BIN)/kompile --debug --main-module $(MAIN_MODULE) --backend haskell --hook-namespaces KRYPTO \
 	                 --syntax-module $(SYNTAX_MODULE) $(symb_test_dir)/$(MAIN_DEFN_FILE).k \
 	                 --directory $(symb_test_dir) -I $(symb_test_dir) \
 	                 $(KOMPILE_OPTS)
