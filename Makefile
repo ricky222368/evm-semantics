@@ -401,6 +401,12 @@ tests/%.prove: tests/%
 	    $(CHECK) $@.out $@.expected
 	rm -rf $@.out
 
+tests/symb-test/%.prove: tests/symb-test/%
+	$(TEST) prove $(TEST_OPTIONS) 																							\
+		--backend $(TEST_SYMBOLIC_BACKEND) --backend-dir $(symb_test_dir) $< SYMB-TEST-VERIFICATION $(K_OPTIONS) 			\
+		--format-failures $(KPROVE_OPTIONS) 																				\
+	    --concrete-rules $(shell cat tests/specs/erc20/concrete-rules.txt | tr '\n' ',') > $@.out
+
 tests/%.search: tests/%
 	$(TEST) search $(TEST_OPTIONS) --backend $(TEST_SYMBOLIC_BACKEND) $< "<statusCode> EVMC_INVALID_INSTRUCTION </statusCode>" > $@-out
 	$(CHECK) $@-out $@-expected
