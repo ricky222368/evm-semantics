@@ -63,7 +63,7 @@ module EVM-SYMB-TESTING
          </k>
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
-      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs)
+      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
 
     //Implementation of create_symbolic_address() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -73,7 +73,7 @@ module EVM-SYMB-TESTING
          </k>
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
-      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("create_symbolic_address", .TypedArgs)
+      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("create_symbolic_address", .TypedArgs))
 
     //Implementation of create_symbolic_uint256() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -83,7 +83,7 @@ module EVM-SYMB-TESTING
          </k>
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
-      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("create_symbolic_uint256", .TypedArgs)
+      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("create_symbolic_uint256", .TypedArgs))
 
     syntax Set ::= "#customFunctionAbis" [function]
     rule #customFunctionAbis => SetItem(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
@@ -123,6 +123,8 @@ module EVM-SYMB-TESTING
 
     rule N modInt pow160 => N
       requires #rangeUInt(160, N) [simplification]
+
+    rule X in SetItem(X) => true [simplification]
 
 endmodule
 ```

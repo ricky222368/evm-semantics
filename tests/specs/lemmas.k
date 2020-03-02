@@ -233,6 +233,8 @@ module LEMMAS-HASKELL [symbolic, kore]
     rule (BUF1 ++ BUF2)[START .. WIDTH] => BUF2 [START -Int #sizeByteArray(BUF1) .. WIDTH]
       requires START >=Int #sizeByteArray(BUF1) [simplification]
 
+    rule BUF[START .. WIDTH] => BUF requires START ==Int 0 andBool WIDTH ==Int #sizeByteArray(BUF) [simplification]
+
     rule #asWord(BUF) /Int D => #asWord(BUF[0 .. #sizeByteArray(BUF) -Int log256Int(D)])
       requires D ==Int 256 ^Int log256Int(D) andBool D >=Int 0
        andBool #sizeByteArray(BUF) >=Int log256Int(D) [simplification]
