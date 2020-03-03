@@ -64,6 +64,8 @@ module EVM-SYMB-TESTING
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
       requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
+      //fixme temp hack. Implement some #freshAccount(ACCT) that creates an account different from existing <activeAccounts>
+      ensures ?ACCT =/=K ACCTTO
 
     //Implementation of create_symbolic_address() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
