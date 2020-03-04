@@ -57,8 +57,9 @@ module EVM-SYMB-TESTING
     //Implementation of new_ERC20_with_arbitrary_storage() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
           => #assume #rangeAddress(?ACCT:Int)
-          //~> #assume #unfold( notBool ?ACCT in ActiveAccts ) //todo doesn't work
-          ~> #assume #notInAcctList(?ACCT, Set2List(ActiveAccts)) //todo still doesn't work
+          //~> #assume notBool ?ACCT in ActiveAccts //todo doesn't work
+          //~> #assume #notInAcctList(?ACCT, Set2List(ActiveAccts)) //todo still doesn't work
+          ~> #assumeNotIn(?ACCT, ActiveAccts) //Tom' suggestion - still doesn't work. Likely because set keys are symbolic.
           ~> #loadERC20Bytecode ?ACCT
           ~> #setLocalMem RETSTART RETWIDTH #buf(32, ?ACCT)
          ...
@@ -68,7 +69,7 @@ module EVM-SYMB-TESTING
          <activeAccounts> ActiveAccts </activeAccounts>
       requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
       //fixme temp hack. Implement some #freshAccount(ACCT) that creates an account different from existing <activeAccounts>
-      ensures ?ACCT =/=K ACCTTO
+      //ensures ?ACCT =/=K ACCTTO
 
     //Implementation of create_symbolic_address() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -132,15 +133,13 @@ module EVM-SYMB-TESTING
 
     rule X in SetItem(X) => true [simplification]
 
-    //hack to process constraints of type notBool X in Set.
-    //Is this really a functional.
-    syntax Bool ::= #unfold( Bool ) [function, functional]
-    rule #unfold ( notBool X in SetItem(A) S:Set ) => X =/=K A andBool #unfold ( notBool X in S ) [simplification]
-    rule #unfold ( notBool X in .Set ) => true                                                    [simplification]
-
     syntax Bool ::= #notInAcctList( Int, List ) [function, functional]
     rule #notInAcctList(X, ListItem(H:Int) TAIL:List) => X =/=Int H andBool #notInAcctList(X, TAIL)
     rule #notInAcctList(X, .List) => true
+
+    syntax KItem ::= #assumeNotIn( Int, Set )
+    rule <k> #assumeNotIn(X, SetItem(H) REST) => #assume X =/=Int H ~> #assumeNotIn(X, REST) ...</k>
+    rule <k> #assumeNotIn(X, .Set) => . ...</k>
 
 endmodule
 ```
