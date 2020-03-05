@@ -57,9 +57,8 @@ module EVM-SYMB-TESTING
     //Implementation of new_ERC20_with_arbitrary_storage() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
           => #assume #rangeAddress(?ACCT:Int)
-          //~> #assume notBool ?ACCT in ActiveAccts //todo doesn't work
-          //~> #assume #notInAcctList(?ACCT, Set2List(ActiveAccts)) //todo still doesn't work
-          ~> #assumeNotIn(?ACCT, ActiveAccts) //Tom' suggestion - still doesn't work. Likely because set keys are symbolic.
+          //~> #assume notBool ?ACCT in ActiveAccts //Will work once "in" for symbolic LHS gets implemented.
+          ~> #assumeNotIn(?ACCT, ActiveAccts) //Works modulo issue: https://github.com/kframework/kore/issues/1637
           ~> #loadERC20Bytecode ?ACCT
           ~> #setLocalMem RETSTART RETWIDTH #buf(32, ?ACCT)
          ...
@@ -68,8 +67,6 @@ module EVM-SYMB-TESTING
          <testerAcctId> ACCTTO </testerAcctId>
          <activeAccounts> ActiveAccts </activeAccounts>
       requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
-      //fixme temp hack. Implement some #freshAccount(ACCT) that creates an account different from existing <activeAccounts>
-      //ensures ?ACCT =/=K ACCTTO
 
     //Implementation of create_symbolic_address() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
