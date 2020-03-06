@@ -66,7 +66,7 @@ module EVM-SYMB-TESTING
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
          <activeAccounts> ActiveAccts </activeAccounts>
-      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
+      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs)
 
     //Implementation of create_symbolic_address() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -76,7 +76,7 @@ module EVM-SYMB-TESTING
          </k>
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
-      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("create_symbolic_address", .TypedArgs))
+      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("create_symbolic_address", .TypedArgs)
 
     //Implementation of create_symbolic_uint256() returns address
     rule <k> CALL _ ACCTTO 0 ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -86,13 +86,12 @@ module EVM-SYMB-TESTING
          </k>
          <localMem> LM </localMem>
          <testerAcctId> ACCTTO </testerAcctId>
-      requires #asInteger(#range(LM, ARGSTART, ARGWIDTH)) ==Int #asInteger(#abiCallData("create_symbolic_uint256", .TypedArgs))
+      requires #range(LM, ARGSTART, ARGWIDTH) ==K #abiCallData("create_symbolic_uint256", .TypedArgs)
 
     syntax Set ::= "#customFunctionAbis" [function, functional]
-    //todo #asInteger wrapper is workaround until Haskell implements `bytes equals bytes` hook
-    rule #customFunctionAbis => SetItem(#asInteger(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs)))
-                                SetItem(#asInteger(#abiCallData("create_symbolic_address", .TypedArgs)))
-                                SetItem(#asInteger(#abiCallData("create_symbolic_uint256", .TypedArgs)))
+    rule #customFunctionAbis => SetItem(#abiCallData("new_ERC20_with_arbitrary_storage", .TypedArgs))
+                                SetItem(#abiCallData("create_symbolic_address", .TypedArgs))
+                                SetItem(#abiCallData("create_symbolic_uint256", .TypedArgs))
 
     //todo temporary hack untin we get priorities working
     rule <k> CALL GCAP ACCTTO VALUE ARGSTART ARGWIDTH RETSTART RETWIDTH
@@ -104,7 +103,7 @@ module EVM-SYMB-TESTING
          <schedule> SCHED </schedule>
          <id> ACCTFROM </id>
          <localMem> LM </localMem>
-      requires notBool ( #asInteger(#range(LM, ARGSTART, ARGWIDTH)) in #customFunctionAbis )
+      requires notBool ( #range(LM, ARGSTART, ARGWIDTH) in #customFunctionAbis )
 
     syntax EthereumCommand ::= "#assume" Bool
     rule <k> #assume B => . ...</k>
